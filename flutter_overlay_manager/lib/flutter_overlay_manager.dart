@@ -18,6 +18,9 @@ class FlutterOverlayManager extends OverlayManager {
   static FlutterOverlayManager? _instance;
   FlutterOverlayManager._();
   final OverlayManager _impl = _OverlayManagerImpl._();
+  
+
+  /// Attach the manager to your app.
   @override
   Widget builder(Widget Function(BuildContext context) builder) =>
       _impl.builder(builder);
@@ -60,6 +63,7 @@ class FlutterOverlayManager extends OverlayManager {
   Future<Loader> showLoading({bool hasShadow = true}) => _impl.showLoading();
 
   /// Only call this function if we don't know where the loading is showing up.
+  ///
   /// Should use loader.dismiss() instead.
   @override
   void forceHideLoading() => _impl.forceHideLoading();
