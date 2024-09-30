@@ -1,6 +1,6 @@
 name: flutter_overlay_manager
 description: "A flutter package for managing overlays. It separate your main UI and the overlays. It also solves some problems encountered when using Navigator."
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/nghinguyengremsy/flutter_overlay_manager
 
 environment:

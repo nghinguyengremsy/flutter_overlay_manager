@@ -1,3 +1,7 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Initial the package.
+
+## 0.0.2
+
+* Publish the package.
