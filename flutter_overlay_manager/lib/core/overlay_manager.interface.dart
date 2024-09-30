@@ -1,7 +1,6 @@
 part of flutter_overlay_manager;
 
 abstract class OverlayManager {
-  
   String get loadingOverlayId;
 
   Widget builder(Widget Function(BuildContext context) builder);
@@ -14,6 +13,9 @@ abstract class OverlayManager {
     OverlayLayoutTypeEnum type = OverlayLayoutTypeEnum.custom,
     bool dismissible = false,
   });
+
+  /// Check whether the overlay is displayed
+  bool isOverlayShowing(String overlayId);
 
   /// If `below` is non-null, the entries are inserted just below `below`.
   /// If `above` is non-null, the entries are inserted just above `above`.

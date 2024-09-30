@@ -18,7 +18,7 @@ class FlutterOverlayManager extends OverlayManager {
   static FlutterOverlayManager? _instance;
   FlutterOverlayManager._();
   final OverlayManager _impl = _OverlayManagerImpl._();
-  
+
   @override
   String get loadingOverlayId => _impl.loadingOverlayId;
 
@@ -58,6 +58,10 @@ class FlutterOverlayManager extends OverlayManager {
         dismissible: dismissible,
       );
 
+  /// Check whether the overlay is displayed
+  @override
+  bool isOverlayShowing(String overlayId) => _impl.isOverlayShowing(overlayId);
+  
   @override
   void hide(String id) => _impl.hide(id);
 

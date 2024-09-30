@@ -105,6 +105,10 @@ class _OverlayManagerImpl implements OverlayManager {
   }
 
   @override
+  bool isOverlayShowing(String overlayId) => _hasEntry(overlayId);
+  
+
+  @override
   void registerLoadingView(WidgetBuilder builder) {
     _loadingBuilder = builder;
   }
