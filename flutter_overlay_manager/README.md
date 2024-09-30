@@ -36,7 +36,9 @@ When integrating this in a Flutter app, you would typically call this method in 
 
 ```dart
 MaterialApp(
-  builder: overlayManager.builder,  // Wraps the app to manage overlays
+  builder: (context, child) {
+        return FlutterOverlayManager.I.builder((context) => child!);
+  },  // Wraps the app to manage overlays
   home: YourHomePage(),
 );
 ```
@@ -82,7 +84,12 @@ overlayManager.registerLoadingView(
 
 You can control the position of the overlay relative to other UI elements:
 ```dart
-overlayManager.setPosition(OverlayPosition.below);
+overlayManager.setPosition(
+      OverlayPosition(
+        overlayId: 'your_overlay_id',
+        below: 'your_another_overlay_id',
+      ),
+    );
 ```
 
 ## Hiding an Overlay

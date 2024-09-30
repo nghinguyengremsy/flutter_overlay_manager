@@ -31,6 +31,10 @@ class _OverlayManagerImpl implements OverlayManager {
 
   bool get _hasLoading => _hasEntry(_LOADING_ID);
   bool get _hasLoadingRequester => _LOADING_REQUESTER_IDs.isNotEmpty;
+
+  @override
+  String get loadingOverlayId => _LOADING_ID;
+
   void _init() {
     /// Loading
     _$loadingRequest.stream.listen((payload) {

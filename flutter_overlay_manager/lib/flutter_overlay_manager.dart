@@ -19,6 +19,8 @@ class FlutterOverlayManager extends OverlayManager {
   FlutterOverlayManager._();
   final OverlayManager _impl = _OverlayManagerImpl._();
   
+  @override
+  String get loadingOverlayId => _impl.loadingOverlayId;
 
   /// Attach the manager to your app.
   @override

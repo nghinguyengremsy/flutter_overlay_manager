@@ -1,6 +1,9 @@
 part of flutter_overlay_manager;
 
 abstract class OverlayManager {
+  
+  String get loadingOverlayId;
+
   Widget builder(Widget Function(BuildContext context) builder);
 
   /// Return an id of the entry in entries.
