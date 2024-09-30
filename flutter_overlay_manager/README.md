@@ -83,6 +83,7 @@ overlayManager.registerLoadingView(
 ## Set Position for the Overlay
 
 You can control the position of the overlay relative to other UI elements:
+
 ```dart
 overlayManager.setPosition(
       OverlayPosition(
@@ -90,6 +91,11 @@ overlayManager.setPosition(
         below: 'your_another_overlay_id',
       ),
     );
+```
+You can also get the ID of the overlay loading to set up the position for your overlays: 
+
+```dart
+overlayManager.loadingOverlayId
 ```
 
 ## Hiding an Overlay

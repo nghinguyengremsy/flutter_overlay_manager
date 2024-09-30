@@ -188,7 +188,7 @@ class _OverlayManagerImpl implements OverlayManager {
     return _entries[id] != null;
   }
 
-  OverlayEntry? _getEntry(String id) {
+  OverlayEntry? _getEntry(String? id) {
     return _entries[id]?.data;
   }
 
@@ -200,7 +200,7 @@ class _OverlayManagerImpl implements OverlayManager {
       return null;
     }
     while (pos != null && (pos.below != null || pos.above != null)) {
-      final entry = _getEntry(pos.below!) ?? _getEntry(pos.above!);
+      final entry = _getEntry(pos.below) ?? _getEntry(pos.above);
       if (entry != null) {
         break;
       }
