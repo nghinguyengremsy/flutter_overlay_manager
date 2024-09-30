@@ -52,10 +52,7 @@ class OverlayLayoutState extends State<OverlayLayout>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: buildWithType(),
-    );
+    return buildWithType();
   }
 
   Widget buildWithType() {
@@ -69,8 +66,11 @@ class OverlayLayoutState extends State<OverlayLayout>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Container(
-                color: widget.backgroundColor,
+              GestureDetector(
+                onTap: widget.onTap,
+                child: Container(
+                  color: widget.backgroundColor,
+                ),
               ),
               widget.child,
             ],
