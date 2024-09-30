@@ -71,6 +71,8 @@ Or if you don't have a loader reference, use:
 ```dart
 overlayManager.forceHideLoading();
 ```
+![Loading Overlay](documents/long_running_task.gif)
+
 ## Register a Custom Loading View
 
 To register a custom loading view globally:
@@ -97,6 +99,10 @@ You can also get the ID of the overlay loading to set up the position for your o
 ```dart
 overlayManager.loadingOverlayId
 ```
+
+Here is an example for another overlay above the loading overlay: 
+
+![Root Overlay](documents/top_overlay.gif)
 
 ## Hiding an Overlay
 
