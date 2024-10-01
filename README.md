@@ -261,6 +261,6 @@ class _TopOverlayViewState extends State<TopOverlayView> {
 
 Pull requests are welcome!
 
-Check out [CONTRIBUTING.md][https://github.com/nghinguyengremsy/flutter_overlay_manager/blob/master/CONTRIBUTING.md], which contains a guide for those who want to contribute to the FL Chart.
+Check out [CONTRIBUTING.md](https://github.com/nghinguyengremsy/flutter_overlay_manager/blob/master/CONTRIBUTING.md), which contains a guide for those who want to contribute to the Flutter Overlay Manager.
 
 Reporting bugs and issues are contribution too, yes it is.
