@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:uuid/v4.dart';
-import '../loader.dart';
+import 'core/loader.dart';
 import '../widget/overlay_widget.dart';
 import '../widget/four_rotating_dots.dart';
 part './core/overlay_data.dart';
