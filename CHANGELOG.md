@@ -17,3 +17,7 @@
 ## 0.0.5 
 
 * Relocate files.
+
+## 0.0.7 
+
+* Fix metadata.
