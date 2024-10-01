@@ -24,12 +24,10 @@ abstract class OverlayManager {
   /// It is an error to specify both `above` and `below`.
   void setPosition(OverlayPosition position);
 
-  /// Set up your loading view.
-  void registerLoadingView(WidgetBuilder builder);
-
   void setLoadingBackgroundColor(Color color);
 
-  Future<Loader> showLoading({bool hasShadow = true});
+  Future<Loader> showLoading(
+      {Widget Function(BuildContext context)? builder, bool hasShadow = true});
 
   /// Only call this function if we don't know where the loading is showing up.
   /// Should use loader.dismiss() instead.
@@ -48,6 +46,12 @@ class _LoadingRequestPayload {
   final _LoadingRequestType type;
   final String id;
   final bool hasShadow;
+  final Widget Function(BuildContext context)? builder;
   const _LoadingRequestPayload(
-      {required this.type, required this.id, this.hasShadow = true});
+      {
+    required this.type,
+    required this.id,
+    this.hasShadow = true,
+    this.builder,
+  });
 }

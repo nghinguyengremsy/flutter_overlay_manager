@@ -1,5 +1,6 @@
-A flutter package for managing overlays. It separate your main UI and the overlays. It also solves some problems encountered when using Navigator.
+A Flutter package for managing overlays. It separates your main UI and the overlays by moving the main UI, including navigation, to another layer. We can add any other layers without affecting the main UI.
 
+It also solves some problems encountered when using Navigator.
 Using `showDialog<T>` in Flutter introduces several challenges:
 
 1. Route Management and Lifecycle Events:
@@ -62,6 +63,14 @@ The manager ensures that only one loading overlay is dislayed when you call show
 ```dart
 Loader loader = await overlayManager.showLoading();
 ```
+
+You can also customize your loading:
+
+```dart
+final loader = await FlutterOverlayManager.I
+      .showLoading(builder: (context) => CircularProgressIndicator());
+```
+
 To hide the loader, call:
 ```dart
 loader.dismiss();
@@ -73,14 +82,6 @@ overlayManager.forceHideLoading();
 ```
 ![Loading Overlay](documents/long_running_task.gif)
 
-## Register a Custom Loading View
-
-To register a custom loading view globally:
-```dart
-overlayManager.registerLoadingView(
-  (context) => CircularProgressIndicator(),
-);
-```
 
 ## Set Position for the Overlay
 
@@ -94,6 +95,7 @@ overlayManager.setPosition(
       ),
     );
 ```
+
 You can also get the ID of the overlay loading to set up the position for your overlays: 
 
 ```dart
@@ -121,7 +123,6 @@ loader.dismiss();
 
 ```dart
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_manager/flutter_overlay_manager.dart';
 
@@ -258,4 +259,8 @@ class _TopOverlayViewState extends State<TopOverlayView> {
 ```
 ## Contributions
 
-Contributions are welcome! Feel free to open issues or submit pull requests on the GitHub repository.
+Pull requests are welcome!
+
+Check out [CONTRIBUTING.md][https://github.com/nghinguyengremsy/flutter_overlay_manager/blob/master/CONTRIBUTING.md], which contains a guide for those who want to contribute to the FL Chart.
+
+Reporting bugs and issues are contribution too, yes it is.

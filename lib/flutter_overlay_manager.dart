@@ -35,11 +35,6 @@ class FlutterOverlayManager extends OverlayManager {
   @override
   void setPosition(OverlayPosition position) => _impl.setPosition(position);
 
-  /// Set up your loading view.
-  @override
-  void registerLoadingView(WidgetBuilder builder) =>
-      _impl.registerLoadingView(builder);
-
   @override
   void setLoadingBackgroundColor(Color color) =>
       _impl.setLoadingBackgroundColor(color);
@@ -61,12 +56,18 @@ class FlutterOverlayManager extends OverlayManager {
   /// Check whether the overlay is displayed
   @override
   bool isOverlayShowing(String overlayId) => _impl.isOverlayShowing(overlayId);
-  
+
   @override
   void hide(String id) => _impl.hide(id);
 
   @override
-  Future<Loader> showLoading({bool hasShadow = true}) => _impl.showLoading();
+  Future<Loader> showLoading(
+          {Widget Function(BuildContext context)? builder,
+          bool hasShadow = true}) =>
+      _impl.showLoading(
+        builder: builder,
+        hasShadow: hasShadow,
+      );
 
   /// Only call this function if we don't know where the loading is showing up.
   ///

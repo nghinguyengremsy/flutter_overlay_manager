@@ -13,8 +13,6 @@ class _OverlayManagerImpl implements OverlayManager {
   late final _LOADING_ID = "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
   var _loadingBackgroundColor = const Color.fromARGB(136, 158, 152, 152);
   final _LOADING_REQUESTER_IDs = <String>{};
-  WidgetBuilder _loadingBuilder =
-      (context) => const FourRotatingDots(color: Colors.blue, size: 40);
 
   ///
   late final _orderedEntries = <String, OverlayPosition>{
@@ -107,12 +105,6 @@ class _OverlayManagerImpl implements OverlayManager {
   @override
   bool isOverlayShowing(String overlayId) => _hasEntry(overlayId);
   
-
-  @override
-  void registerLoadingView(WidgetBuilder builder) {
-    _loadingBuilder = builder;
-  }
-
   @override
   void setLoadingBackgroundColor(Color color) {
     _loadingBackgroundColor = color;
@@ -121,20 +113,23 @@ class _OverlayManagerImpl implements OverlayManager {
   ///* Loading
   void _requestLoading({required _LoadingRequestPayload payload}) async {
     if (payload.type == _LoadingRequestType.hide) {
-      //wait 100ms for avoid loading flashing when many API call sequentially
+      //wait 100ms for avoid loading flashing when many APIs call sequentially
       await Future.delayed(const Duration(milliseconds: 100));
     }
     _$loadingRequest.add(payload);
   }
 
   @override
-  Future<Loader> showLoading({bool hasShadow = true}) async {
+  Future<Loader> showLoading(
+      {Widget Function(BuildContext context)? builder,
+      bool hasShadow = true}) async {
     final id = _generateLoadingID();
     _requestLoading(
       payload: _LoadingRequestPayload(
         id: id,
         type: _LoadingRequestType.show,
         hasShadow: hasShadow,
+        builder: builder,
       ),
     );
     await Future.delayed(const Duration(milliseconds: 50));
@@ -150,9 +145,8 @@ class _OverlayManagerImpl implements OverlayManager {
         });
   }
 
-  @override
-
   /// Only call this function if we don't know where the loading is showing up.
+  @override
   void forceHideLoading() {
     _LOADING_REQUESTER_IDs.clear();
     hide(_LOADING_ID);
@@ -169,7 +163,8 @@ class _OverlayManagerImpl implements OverlayManager {
   void _showLoadingHandler({required _LoadingRequestPayload payload}) {
     if (!_hasLoading) {
       show(
-        _loadingBuilder,
+        payload.builder ??
+            (context) => const FourRotatingDots(color: Colors.blue, size: 40),
         id: _LOADING_ID,
         type: OverlayLayoutTypeEnum.dialog,
         backgroundColor: _loadingBackgroundColor,
