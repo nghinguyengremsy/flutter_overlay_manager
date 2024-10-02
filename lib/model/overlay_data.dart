@@ -1,4 +1,6 @@
-part of flutter_overlay_manager;
+import 'package:flutter/material.dart';
+
+import '../widget/overlay_widget.dart';
 
 class OverlayData<T> {
   final String id;
