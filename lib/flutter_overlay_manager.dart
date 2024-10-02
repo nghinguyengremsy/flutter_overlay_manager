@@ -3,21 +3,21 @@ library flutter_overlay_manager;
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'package:uuid/v4.dart';
-import 'core/loader.dart';
-import '../widget/overlay_widget.dart';
-import '../widget/four_rotating_dots.dart';
-part './core/overlay_data.dart';
-part './core/overlay_position.dart';
-part './core/overlay_manager.impl.dart';
-part './core/overlay_manager.interface.dart';
+import 'implement/overlay_manager.impl.dart';
+import 'model/loader.dart';
+import 'model/overlay_position.dart';
+import 'repository/overlay_manager.dart';
+import 'widget/overlay_widget.dart';
+export 'model/overlay_position.dart';
+export 'widget/overlay_widget.dart';
+
 
 class FlutterOverlayManager extends OverlayManager {
   static FlutterOverlayManager get I => _instance ??= FlutterOverlayManager._();
   static FlutterOverlayManager asNewInstance() => FlutterOverlayManager._();
   static FlutterOverlayManager? _instance;
   FlutterOverlayManager._();
-  final OverlayManager _impl = _OverlayManagerImpl._();
+  final OverlayManager _impl = OverlayManagerImpl();
 
   @override
   String get loadingOverlayId => _impl.loadingOverlayId;
