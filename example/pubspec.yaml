@@ -38,7 +38,7 @@ dependencies:
   flutter_overlay_manager:
     git: 
       url: https://github.com/nghinguyengremsy/flutter_overlay_manager.git
-      path: flutter_overlay_manager
+      ref: dev_restruceture
 
 dev_dependencies:
   flutter_test:
