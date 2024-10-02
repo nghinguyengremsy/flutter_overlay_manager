@@ -89,11 +89,10 @@ packages:
   flutter_overlay_manager:
     dependency: "direct main"
     description:
-      path: "."
-      ref: dev_restruceture
-      resolved-ref: "3373db471c0638d6abe344e6c8a0e2f40b8fd4bc"
-      url: "https://github.com/nghinguyengremsy/flutter_overlay_manager.git"
-    source: git
+      name: flutter_overlay_manager
+      sha256: "878ef466afdb66539a1426dff09fb3ce507617aa76ea8fd0438ae72f96456ad3"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.7"
   flutter_test:
     dependency: "direct dev"

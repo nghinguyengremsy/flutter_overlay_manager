@@ -21,3 +21,7 @@
 ## 0.0.7 
 
 * Fix metadata.
+
+## 1.0.0 
+
+* Refactor the impl.
