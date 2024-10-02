@@ -1,5 +1,3 @@
-part of flutter_overlay_manager;
-
 class OverlayPosition {
   final String id;
   final String? below;

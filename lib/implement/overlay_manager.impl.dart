@@ -1,14 +1,25 @@
-part of flutter_overlay_manager;
+import 'dart:async';
 
-class _OverlayManagerImpl implements OverlayManager {
-  _OverlayManagerImpl._() {
+import 'package:flutter/material.dart';
+import 'package:uuid/v4.dart';
+
+import '../model/loader.dart';
+import '../model/loading_payload.dart';
+import '../model/overlay_data.dart';
+import '../model/overlay_position.dart';
+import '../repository/overlay_manager.dart';
+import '../widget/four_rotating_dots.dart';
+import '../widget/overlay_widget.dart';
+
+class OverlayManagerImpl implements OverlayManager {
+  OverlayManagerImpl() {
     _init();
   }
   final _overlayKey = GlobalKey<OverlayState>();
   final _entries = <String, OverlayData<OverlayEntry>>{};
 
   ///*Loading
-  final _$loadingRequest = StreamController<_LoadingRequestPayload>();
+  final _$loadingRequest = StreamController<LoadingRequestPayload>();
   final _LOADING_ID_PREFIX = "LOADING";
   late final _LOADING_ID = "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
   var _loadingBackgroundColor = const Color.fromARGB(136, 158, 152, 152);
@@ -36,9 +47,9 @@ class _OverlayManagerImpl implements OverlayManager {
   void _init() {
     /// Loading
     _$loadingRequest.stream.listen((payload) {
-      if (payload.type == _LoadingRequestType.hide) {
+      if (payload.type == LoadingRequestType.hide) {
         _hideLoadingHandler(payload: payload);
-      } else if (payload.type == _LoadingRequestType.show) {
+      } else if (payload.type == LoadingRequestType.show) {
         _showLoadingHandler(payload: payload);
       }
     });
@@ -104,15 +115,15 @@ class _OverlayManagerImpl implements OverlayManager {
 
   @override
   bool isOverlayShowing(String overlayId) => _hasEntry(overlayId);
-  
+
   @override
   void setLoadingBackgroundColor(Color color) {
     _loadingBackgroundColor = color;
   }
 
   ///* Loading
-  void _requestLoading({required _LoadingRequestPayload payload}) async {
-    if (payload.type == _LoadingRequestType.hide) {
+  void _requestLoading({required LoadingRequestPayload payload}) async {
+    if (payload.type == LoadingRequestType.hide) {
       //wait 100ms for avoid loading flashing when many APIs call sequentially
       await Future.delayed(const Duration(milliseconds: 100));
     }
@@ -125,9 +136,9 @@ class _OverlayManagerImpl implements OverlayManager {
       bool hasShadow = true}) async {
     final id = _generateLoadingID();
     _requestLoading(
-      payload: _LoadingRequestPayload(
+      payload: LoadingRequestPayload(
         id: id,
-        type: _LoadingRequestType.show,
+        type: LoadingRequestType.show,
         hasShadow: hasShadow,
         builder: builder,
       ),
@@ -137,9 +148,9 @@ class _OverlayManagerImpl implements OverlayManager {
         overlayId: id,
         dismiss: () async {
           _requestLoading(
-            payload: _LoadingRequestPayload(
+            payload: LoadingRequestPayload(
               id: id,
-              type: _LoadingRequestType.hide,
+              type: LoadingRequestType.hide,
             ),
           );
         });
@@ -152,7 +163,7 @@ class _OverlayManagerImpl implements OverlayManager {
     hide(_LOADING_ID);
   }
 
-  void _hideLoadingHandler({required _LoadingRequestPayload payload}) {
+  void _hideLoadingHandler({required LoadingRequestPayload payload}) {
     _LOADING_REQUESTER_IDs.remove(payload.id);
 
     if (!_hasLoadingRequester) {
@@ -160,7 +171,7 @@ class _OverlayManagerImpl implements OverlayManager {
     }
   }
 
-  void _showLoadingHandler({required _LoadingRequestPayload payload}) {
+  void _showLoadingHandler({required LoadingRequestPayload payload}) {
     if (!_hasLoading) {
       show(
         payload.builder ??

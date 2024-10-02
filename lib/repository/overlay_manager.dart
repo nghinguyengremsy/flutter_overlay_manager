@@ -1,4 +1,8 @@
-part of flutter_overlay_manager;
+import 'package:flutter/material.dart';
+
+import '../model/loader.dart';
+import '../model/overlay_position.dart';
+import '../widget/overlay_widget.dart';
 
 abstract class OverlayManager {
   String get loadingOverlayId;
@@ -35,23 +39,4 @@ abstract class OverlayManager {
 
   /// Close the entry with [id]
   void hide(String id);
-}
-
-enum _LoadingRequestType {
-  hide,
-  show,
-}
-
-class _LoadingRequestPayload {
-  final _LoadingRequestType type;
-  final String id;
-  final bool hasShadow;
-  final Widget Function(BuildContext context)? builder;
-  const _LoadingRequestPayload(
-      {
-    required this.type,
-    required this.id,
-    this.hasShadow = true,
-    this.builder,
-  });
 }
