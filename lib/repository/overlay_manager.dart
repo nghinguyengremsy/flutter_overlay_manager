@@ -39,4 +39,7 @@ abstract class OverlayManager {
 
   /// Close the entry with [id]
   void hide(String id);
+
+  /// Re-arrange the entries based on their position.
+  void rearrange();
 }

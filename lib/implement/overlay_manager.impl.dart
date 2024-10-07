@@ -22,6 +22,7 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
   late final _LOADING_ID = "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
   var _loadingBackgroundColor = const Color.fromARGB(136, 158, 152, 152);
   final _LOADING_REQUESTER_IDs = <String>{};
+
   ///
 
   bool get _hasLoading => hasEntry(_LOADING_ID);
@@ -65,7 +66,6 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
     bool dismissible = false,
   }) {
     final _id = id ?? const UuidV4().generate();
-    final layoutKey = GlobalKey<OverlayLayoutState>();
     final loader = Loader(
       overlayId: _id,
       dismiss: () {
@@ -76,7 +76,6 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
       builder: (context) {
         final widget = builder(context);
         return OverlayLayout(
-          key: layoutKey,
           type: type,
           backgroundColor: backgroundColor,
           onTap: dismissible
@@ -88,7 +87,7 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
         );
       },
     );
-    insert(_id, entry, layoutKey);
+    insert(_id, entry);
     return loader;
   }
 
@@ -167,6 +166,11 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
   @override
   void hide(String id) {
     remove(id);
+  }
+
+  @override
+  void rearrange() {
+    rearrangeByPosition();
   }
 
   String _generateLoadingID() {
