@@ -11,7 +11,6 @@ import 'widget/overlay_widget.dart';
 export 'model/overlay_position.dart';
 export 'widget/overlay_widget.dart';
 
-
 class FlutterOverlayManager extends OverlayManager {
   static FlutterOverlayManager get I => _instance ??= FlutterOverlayManager._();
   static FlutterOverlayManager asNewInstance() => FlutterOverlayManager._();
@@ -74,4 +73,8 @@ class FlutterOverlayManager extends OverlayManager {
   /// Should use loader.dismiss() instead.
   @override
   void forceHideLoading() => _impl.forceHideLoading();
+
+  /// Re-arrange the entries based on their position.
+  @override
+  void rearrange() => _impl.rearrange();
 }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../widget/overlay_widget.dart';
-
 class OverlayData<T> {
   final String id;
-  final T data;
-  final GlobalKey<OverlayLayoutState> layoutKey;
+  final OverlayEntry entry;
   const OverlayData(
-      {required this.id, required this.data, required this.layoutKey});
+      {required this.id, required this.entry});
 }

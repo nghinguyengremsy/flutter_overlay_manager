@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../model/overlay_data.dart';
 import '../model/overlay_position.dart';
-import '../widget/overlay_widget.dart';
 
 mixin OverlayMixin {
   final _overlayKey = GlobalKey<OverlayState>();
@@ -19,23 +18,22 @@ mixin OverlayMixin {
   }
 
   ///
-  late final _orderedEntries = <String, OverlayPosition>{};
+  final _orderedEntries = <String, OverlayPosition>{};
 
   bool hasEntry(String id) {
     return _entries[id] != null;
   }
 
   OverlayEntry? getEntry(String? id) {
-    return _entries[id]?.data;
+    return _entries[id]?.entry;
   }
 
   void insert(
     String id,
     OverlayEntry entry,
-    GlobalKey<OverlayLayoutState> layoutKey,
   ) {
     final overlayPositon = getOverlayPosition(id);
-    _entries[id] = OverlayData(id: id, data: entry, layoutKey: layoutKey);
+    _entries[id] = OverlayData(id: id, entry: entry);
     _currentState.insert(
       entry,
       below: getEntry(overlayPositon?.below ?? ''),
@@ -46,9 +44,37 @@ mixin OverlayMixin {
   void remove(String id) {
     final entry = _entries[id];
     if (entry != null) {
-      entry.data.remove();
+      entry.entry.remove();
       _entries.remove(id);
     }
+  }
+
+  void rearrangeByPosition() {
+    final entries = <OverlayEntry>[];
+    for (final element in _entries.entries) {
+      final pos = getOverlayPosition(element.key);
+      if (pos == null || (pos.above == null && pos.below == null)) {
+        entries.add(element.value.entry);
+      }
+      if (pos!.above != null) {
+        final above = getEntry(pos.above)!;
+        final aboveIndex = entries.indexOf(above);
+        if (aboveIndex == -1) {
+          entries.add(element.value.entry);
+        } else {
+          entries.insert(aboveIndex + 1, element.value.entry);
+        }
+      } else {
+        final below = getEntry(pos.below)!;
+        final belowIndex = entries.indexOf(below);
+        if (belowIndex == -1) {
+          entries.insert(0, element.value.entry);
+        } else {
+          entries.insert(belowIndex, element.value.entry);
+        }
+      }
+    }
+    _currentState.rearrange(entries, below: entries.lastOrNull);
   }
 
   void setOverlayPosition(OverlayPosition position) {
