@@ -25,3 +25,7 @@
 ## 1.0.0 
 
 * Refactor the impl.
+
+## 1.1.0 
+
+* Add rearrange feature.
