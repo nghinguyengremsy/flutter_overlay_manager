@@ -6,7 +6,7 @@ import 'package:flutter_overlay_manager/flutter_overlay_manager.dart';
 
 void main() {
   FlutterOverlayManager.I
-      .setLoadingZIndex(0); // The overlay with _TOP_OVERLAY_ID id is on top.
+      .setLoadingZIndex(0);
   runApp(const MyApp());
 }
 
