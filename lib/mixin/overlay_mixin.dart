@@ -19,9 +19,11 @@ mixin OverlayMixin {
   bool hasEntry(String id) {
     return _hashEntries[id] != null;
   }
+
   OverlayEntryData? getOverlayEntryData(String? id) {
     return _hashEntries[id];
   }
+
   OverlayEntry? getEntry(String? id) {
     return _hashEntries[id]?.entry;
   }
@@ -63,10 +65,11 @@ mixin OverlayMixin {
         );
       } else {
         // There's no entry below the new entry, it should be at first in the list.
+        final aboveOverlayEntry = _entries.first.entry;
         _entries.insert(0, data);
         _currentState.insert(
           data.entry,
-          below: _entries.first.entry,
+          below: aboveOverlayEntry,
         );
       }
     }
