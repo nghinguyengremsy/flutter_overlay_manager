@@ -91,7 +91,7 @@ packages:
     description:
       path: "."
       ref: dev_refactor
-      resolved-ref: "514e3c20e004151549f20d5ec2b16e4d21f1421c"
+      resolved-ref: "4d1a3eefaf72a204da7adb771f7b2ce8dd071c38"
       url: "https://github.com/nghinguyengremsy/flutter_overlay_manager"
     source: git
     version: "1.1.0"
