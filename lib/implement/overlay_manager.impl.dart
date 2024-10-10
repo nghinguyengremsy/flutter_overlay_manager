@@ -3,44 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:uuid/v4.dart';
 
+import '../controller/overlay_entry_control.dart';
 import '../mixin/overlay_mixin.dart';
-import '../model/loader.dart';
-import '../model/loading_payload.dart';
-import '../model/overlay_position.dart';
+import '../model/overlay_entry_data.dart';
 import '../repository/overlay_manager.dart';
 import '../widget/four_rotating_dots.dart';
 import '../widget/overlay_widget.dart';
 
 class OverlayManagerImpl with OverlayMixin implements OverlayManager {
-  OverlayManagerImpl() {
-    _init();
-  }
+  OverlayManagerImpl();
+  final _hashRequester = <String, List<String>>{}; // Entry's ID - Requester ID
 
   ///*Loading
-  final _$loadingRequest = StreamController<LoadingRequestPayload>();
-  final _LOADING_ID_PREFIX = "LOADING";
-  late final _LOADING_ID = "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
+  late final _loadingId = "LOADING_${const UuidV4().generate()}";
+  var _loadingZIndex = 0;
   var _loadingBackgroundColor = const Color.fromARGB(136, 158, 152, 152);
-  final _LOADING_REQUESTER_IDs = <String>{};
-
-  ///
-
-  bool get _hasLoading => hasEntry(_LOADING_ID);
-  bool get _hasLoadingRequester => _LOADING_REQUESTER_IDs.isNotEmpty;
 
   @override
-  String get loadingOverlayId => _LOADING_ID;
-
-  void _init() {
-    /// Loading
-    _$loadingRequest.stream.listen((payload) {
-      if (payload.type == LoadingRequestType.hide) {
-        _hideLoadingHandler(payload: payload);
-      } else if (payload.type == LoadingRequestType.show) {
-        _showLoadingHandler(payload: payload);
-      }
-    });
-  }
+  String get loadingOverlayId => _loadingId;
 
   @override
   Widget builder(Widget Function(BuildContext context) builder) {
@@ -51,27 +31,30 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
     );
   }
 
-  @override
-  void setPosition(OverlayPosition position) {
-    setOverlayPosition(position);
-  }
-
   /// Return an id of the entry in entries.
   @override
-  Loader show(
+  OverlayEntryControl show(
     Widget Function(BuildContext context) builder, {
-    String? id,
+    required String id,
+    required int zindex,
     Color backgroundColor = Colors.transparent,
     OverlayLayoutTypeEnum type = OverlayLayoutTypeEnum.custom,
     bool dismissible = false,
   }) {
-    final _id = id ?? const UuidV4().generate();
-    final loader = Loader(
-      overlayId: _id,
-      dismiss: () {
-        hide(_id);
-      },
-    );
+    late OverlayEntryControl control;
+    OverlayEntryData? currentData = getOverlayEntryData(id);
+    final requesterId = const UuidV4().generate();
+
+    _addOverlayRequester(id, requesterId);
+    if (currentData != null) {
+      control = OverlayEntryControl(
+        currentData,
+        this,
+        () => retake(currentData),
+        () => _removeOverlayRequester(id, requesterId),
+      );
+      return control;
+    }
     final entry = OverlayEntry(
       builder: (context) {
         final widget = builder(context);
@@ -80,15 +63,23 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
           backgroundColor: backgroundColor,
           onTap: dismissible
               ? () async {
-                  await loader.dismiss.call();
+                  await control.dismiss();
                 }
               : null,
           child: widget,
         );
       },
     );
-    insert(_id, entry);
-    return loader;
+    final data = insert(id, zindex, entry);
+
+    control = OverlayEntryControl(
+      data,
+      this,
+      () => retake(data),
+      () => _removeOverlayRequester(id, requesterId),
+    );
+
+    return control;
   }
 
   @override
@@ -99,81 +90,51 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
     _loadingBackgroundColor = color;
   }
 
-  ///* Loading
-  void _requestLoading({required LoadingRequestPayload payload}) async {
-    if (payload.type == LoadingRequestType.hide) {
-      //wait 100ms for avoid loading flashing when many APIs call sequentially
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-    _$loadingRequest.add(payload);
-  }
+  @override
+  void setLoadingZIndex(int zindex) => _loadingZIndex = zindex;
 
   @override
-  Future<Loader> showLoading(
-      {Widget Function(BuildContext context)? builder,
-      bool hasShadow = true}) async {
-    final id = _generateLoadingID();
-    _requestLoading(
-      payload: LoadingRequestPayload(
-        id: id,
-        type: LoadingRequestType.show,
-        hasShadow: hasShadow,
-        builder: builder,
-      ),
-    );
-    await Future.delayed(const Duration(milliseconds: 50));
-    return Loader(
-        overlayId: id,
-        dismiss: () async {
-          _requestLoading(
-            payload: LoadingRequestPayload(
-              id: id,
-              type: LoadingRequestType.hide,
-            ),
-          );
-        });
-  }
-
-  /// Only call this function if we don't know where the loading is showing up.
-  @override
-  void forceHideLoading() {
-    _LOADING_REQUESTER_IDs.clear();
-    hide(_LOADING_ID);
-  }
-
-  void _hideLoadingHandler({required LoadingRequestPayload payload}) {
-    _LOADING_REQUESTER_IDs.remove(payload.id);
-
-    if (!_hasLoadingRequester) {
-      hide(_LOADING_ID);
-    }
-  }
-
-  void _showLoadingHandler({required LoadingRequestPayload payload}) {
-    if (!_hasLoading) {
+  OverlayEntryControl showLoading(
+          {Widget Function(BuildContext context)? builder,
+          bool hasShadow = true}) =>
       show(
-        payload.builder ??
+        builder ??
             (context) => const FourRotatingDots(color: Colors.blue, size: 40),
-        id: _LOADING_ID,
-        type: OverlayLayoutTypeEnum.dialog,
+        id: _loadingId,
+        zindex: _loadingZIndex,
         backgroundColor: _loadingBackgroundColor,
+        type: OverlayLayoutTypeEnum.dialog,
       );
-    }
-  }
 
   ///
   /// Close the entry with [id]
   @override
   void hide(String id) {
+    _hashRequester[id]?.clear();
     remove(id);
   }
 
   @override
   void rearrange() {
-    rearrangeByPosition();
+    rearrangeByZIndex();
   }
 
-  String _generateLoadingID() {
-    return "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
+  void _addOverlayRequester(String overlayId, String requesterId) {
+    final requester = _hashRequester[overlayId];
+    if (requester == null || requester.isEmpty) {
+      _hashRequester[overlayId] = [];
+      _hashRequester[overlayId]!.add(requesterId);
+    } else {
+      _hashRequester[overlayId]!.add(requesterId);
+    }
+  }
+
+  void _removeOverlayRequester(String overlayId, String requesterId) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    final requester = _hashRequester[overlayId];
+    requester?.remove(requesterId);
+    if (requester == null || requester.isEmpty) {
+      hide(overlayId);
+    }
   }
 }

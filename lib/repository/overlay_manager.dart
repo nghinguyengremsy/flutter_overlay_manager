@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../model/loader.dart';
-import '../model/overlay_position.dart';
+import '../controller/overlay_entry_control.dart';
 import '../widget/overlay_widget.dart';
 
 abstract class OverlayManager {
@@ -9,10 +7,13 @@ abstract class OverlayManager {
 
   Widget builder(Widget Function(BuildContext context) builder);
 
-  /// Return an id of the entry in entries.
-  Loader show(
+  /// If the `id` exists, just keep the current entry respectively.
+  /// The entry's inserted just below the entry whose zindex greater than the `zindex`.
+  /// Return an OverlayEntryControl instance for controlling the entry if need.
+  OverlayEntryControl show(
     Widget Function(BuildContext context) builder, {
-    String? id,
+    required String id,
+    required int zindex,
     Color backgroundColor = Colors.transparent,
     OverlayLayoutTypeEnum type = OverlayLayoutTypeEnum.custom,
     bool dismissible = false,
@@ -21,23 +22,15 @@ abstract class OverlayManager {
   /// Check whether the overlay is displayed
   bool isOverlayShowing(String overlayId);
 
-  /// If `below` is non-null, the entries are inserted just below `below`.
-  /// If `above` is non-null, the entries are inserted just above `above`.
-  /// Otherwise, the entries are inserted on top.
-  ///
-  /// It is an error to specify both `above` and `below`.
-  void setPosition(OverlayPosition position);
-
   void setLoadingBackgroundColor(Color color);
 
-  Future<Loader> showLoading(
+  void setLoadingZIndex(int zindex);
+
+  OverlayEntryControl showLoading(
       {Widget Function(BuildContext context)? builder, bool hasShadow = true});
 
-  /// Only call this function if we don't know where the loading is showing up.
-  /// Should use loader.dismiss() instead.
-  void forceHideLoading();
-
   /// Close the entry with [id]
+  /// Only call this function if we don't know where the entry is showing up that mean we dont have an OverlayEntryControl reference.
   void hide(String id);
 
   /// Re-arrange the entries based on their position.
