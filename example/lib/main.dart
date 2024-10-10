@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_manager/flutter_overlay_manager.dart';
 
-
 void main() {
-  FlutterOverlayManager.I
-      .setLoadingZIndex(0);
+  FlutterOverlayManager.I.setLoadingZIndex(0);
   runApp(const MyApp());
 }
 

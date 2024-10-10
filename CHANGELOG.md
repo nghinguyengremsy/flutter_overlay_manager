@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Fix typo.
+
 ## 2.0.0
 
 * Change mechanism for organizing the entries.
