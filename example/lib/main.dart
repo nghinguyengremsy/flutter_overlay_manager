@@ -3,17 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_manager/flutter_overlay_manager.dart';
 
-final _TOP_OVERLAY_ID = "TOP_OVERLAY_ID";
 
 void main() {
-  FlutterOverlayManager.I.setPosition(OverlayPosition(
-      id: _TOP_OVERLAY_ID)); // The overlay with _TOP_OVERLAY_ID id is on top.
-
-  final loadingOverlayID = FlutterOverlayManager.I.loadingOverlayId;
-  FlutterOverlayManager.I.setPosition(OverlayPosition(
-    id: loadingOverlayID,
-    below: _TOP_OVERLAY_ID,
-  )); // The overlay loading will be below the overlay with _TOP_OVERLAY_ID id.
+  FlutterOverlayManager.I
+      .setLoadingZIndex(0);
   runApp(const MyApp());
 }
 
@@ -69,8 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 32),
             FilledButton(
               onPressed: () {
-                if (FlutterOverlayManager.I.isOverlayShowing(_TOP_OVERLAY_ID)) {
-                  FlutterOverlayManager.I.hide(_TOP_OVERLAY_ID);
+                if (FlutterOverlayManager.I
+                    .isOverlayShowing("_TOP_OVERLAY_ID")) {
+                  FlutterOverlayManager.I.hide("_TOP_OVERLAY_ID");
                 } else {
                   FlutterOverlayManager.I.show(
                     (context) => const Positioned(
@@ -78,13 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       right: 0,
                       child: TopOverlayView(),
                     ),
-                    id: _TOP_OVERLAY_ID,
+                    zindex: 1, // The overlay loading will be below the overlay
+                    id: "_TOP_OVERLAY_ID",
                   );
                 }
                 setState(() {});
               },
               child: Text(
-                  FlutterOverlayManager.I.isOverlayShowing(_TOP_OVERLAY_ID)
+                  FlutterOverlayManager.I.isOverlayShowing("_TOP_OVERLAY_ID")
                       ? "Hide Top Overlay"
                       : "Show Top Overlay"),
             ),

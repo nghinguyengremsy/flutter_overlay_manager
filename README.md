@@ -12,6 +12,14 @@ Using `showDialog<T>` in Flutter introduces several challenges:
 3. Navigator Confusion:
     - Dialogs and app pages share the same navigator and cannot be individually named. Using `Navigator.of(context).pop()` to close a dialog or a page can lead to confusion, as the behavior depends on the current navigator context.
 
+## Feature
+
+- Built-in the loading overlay entry, see [Show a Loading Indicator](#show-a-loading-indicator)
+
+- Sort entries by z-index.
+
+- Only overlay entry is shown if there're same ID.
+
 ## Installation
 
 Add the following to your pubspec.yaml file:
@@ -50,6 +58,8 @@ You can display any widget as an overlay:
 ```dart
 overlayManager.show(
   (context) => YourCustomWidget(),
+  id:'your_overlay_entry_id',
+  zindex: 1, // Where your overlay entry should be.
   backgroundColor: Colors.black54,
   dismissible: true,
 );
@@ -61,48 +71,35 @@ There is a built-in loading overlay, you can use it to prevent the user from int
 The manager ensures that only one loading overlay is dislayed when you call showLoading() anywhere and anytime: 
 
 ```dart
-Loader loader = await overlayManager.showLoading();
+OverlayEntryControl control = await overlayManager.showLoading();
 ```
 
 You can also customize your loading:
 
 ```dart
-final loader = await FlutterOverlayManager.I
+final control = await FlutterOverlayManager.I
       .showLoading(builder: (context) => CircularProgressIndicator());
 ```
 
-To hide the loader, call:
+To hide the control, call:
 ```dart
-loader.dismiss();
+control.dismiss();
 ```
-Or if you don't have a loader reference, use:
+Or if you don't have a control reference, use:
 
 ```dart
-overlayManager.forceHideLoading();
+overlayManager.hide(loadingId);
 ```
 ![Loading Overlay](documents/long_running_task.gif)
 
 
-## Set Position for the Overlay
+## Set position for the Overlay
 
-You can control the position of the overlay relative to other UI elements:
-
-```dart
-overlayManager.setPosition(
-      OverlayPosition(
-        overlayId: 'your_overlay_id',
-        below: 'your_another_overlay_id',
-      ),
-    );
-```
-
-You can also get the ID of the overlay loading to set up the position for your overlays: 
-
-```dart
-overlayManager.loadingOverlayId
-```
+The sorting is based on the `z-index` of each entry. That index is obtained when calling show() function.
 
 Here is an example for another overlay above the loading overlay: 
+- The `z-index` of the loading is 0.
+- The `z-index` of the customized overlay is 1.
 
 ![Root Overlay](documents/top_overlay.gif)
 
@@ -114,29 +111,22 @@ To hide a specific overlay by its ID:
 overlayManager.hide('your_overlay_id');
 ```
 
-Or if you have a loader reference, use:
+Or if you have a control reference, use:
 
 ```dart
-loader.dismiss();
+control.dismiss();
 ```
 ## Example
 
 ```dart
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_manager/flutter_overlay_manager.dart';
 
-final _TOP_OVERLAY_ID = "TOP_OVERLAY_ID";
 
 void main() {
-  FlutterOverlayManager.I.setPosition(OverlayPosition(
-      id: _TOP_OVERLAY_ID)); // The overlay with _TOP_OVERLAY_ID id is on top.
-
-  final loadingOverlayID = FlutterOverlayManager.I.loadingOverlayId;
-  FlutterOverlayManager.I.setPosition(OverlayPosition(
-    id: loadingOverlayID,
-    below: _TOP_OVERLAY_ID,
-  )); // The overlay loading will be below the overlay with _TOP_OVERLAY_ID id.
+  FlutterOverlayManager.I.setLoadingZIndex(0);
   runApp(const MyApp());
 }
 
@@ -192,8 +182,9 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 32),
             FilledButton(
               onPressed: () {
-                if (FlutterOverlayManager.I.isOverlayShowing(_TOP_OVERLAY_ID)) {
-                  FlutterOverlayManager.I.hide(_TOP_OVERLAY_ID);
+                if (FlutterOverlayManager.I
+                    .isOverlayShowing("_TOP_OVERLAY_ID")) {
+                  FlutterOverlayManager.I.hide("_TOP_OVERLAY_ID");
                 } else {
                   FlutterOverlayManager.I.show(
                     (context) => const Positioned(
@@ -201,13 +192,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       right: 0,
                       child: TopOverlayView(),
                     ),
-                    id: _TOP_OVERLAY_ID,
+                    zindex: 1, // The overlay loading will be below the overlay
+                    id: "_TOP_OVERLAY_ID",
                   );
                 }
                 setState(() {});
               },
               child: Text(
-                  FlutterOverlayManager.I.isOverlayShowing(_TOP_OVERLAY_ID)
+                  FlutterOverlayManager.I.isOverlayShowing("_TOP_OVERLAY_ID")
                       ? "Hide Top Overlay"
                       : "Show Top Overlay"),
             ),
@@ -255,6 +247,7 @@ class _TopOverlayViewState extends State<TopOverlayView> {
     );
   }
 }
+
 
 ```
 ## Contributions
