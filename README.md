@@ -81,7 +81,7 @@ final control = await FlutterOverlayManager.I
       .showLoading(builder: (context) => CircularProgressIndicator());
 ```
 
-To hide the control, call:
+To hide the loading, call:
 ```dart
 control.dismiss();
 ```

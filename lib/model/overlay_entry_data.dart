@@ -8,7 +8,7 @@ class OverlayEntryData {
       {required this.id, required int zindex, required this.entry}) {
     _zindex = zindex;
   }
-  
+
   int get zindex => _zindex;
 
   void setZIndex(int zindex) {
