@@ -49,10 +49,17 @@ mixin OverlayMixin {
   ) {
     final belowOverlayEntry = _getBelowOverlayEntry(data.zindex);
     _hashEntries[data.id] = data;
+    // If the entries is empty, just add new entry to list.
     if (_entries.isEmpty) {
       _entries.add(data);
     } else {
-      _entries.insert(data.zindex + 1, data);
+      // If there's an entry below the new entry, put it behide.
+      if (belowOverlayEntry != null) {
+        _entries.insert(data.zindex + 1, data);
+        // There's no entry below the new entry, it should be at first in the list.
+      } else {
+        _entries.insert(0, data);
+      }
     }
     _currentState.insert(
       data.entry,

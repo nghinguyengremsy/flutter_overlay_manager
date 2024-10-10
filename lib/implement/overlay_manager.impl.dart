@@ -103,6 +103,7 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
         id: _loadingId,
         zindex: _loadingZIndex,
         backgroundColor: _loadingBackgroundColor,
+        type: OverlayLayoutTypeEnum.dialog,
       );
 
   ///
