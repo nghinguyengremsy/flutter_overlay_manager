@@ -1,12 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-
-import '../model/overlay_data.dart';
-import '../model/overlay_position.dart';
+import '../model/overlay_entry_data.dart';
 
 mixin OverlayMixin {
   final _overlayKey = GlobalKey<OverlayState>();
-  final _entries = <String, OverlayData<OverlayEntry>>{};
-
+  final _hashEntries = <String, OverlayEntryData>{};
+  final _entries = <OverlayEntryData>[];
   GlobalKey<OverlayState> get overlayKey => _overlayKey;
 
   /// This values are used for managing where the loading is requested to be displayed.
@@ -17,85 +16,114 @@ mixin OverlayMixin {
     return _overlayKey.currentState!;
   }
 
-  ///
-  final _orderedEntries = <String, OverlayPosition>{};
-
   bool hasEntry(String id) {
-    return _entries[id] != null;
+    return _hashEntries[id] != null;
   }
-
+  OverlayEntryData? getOverlayEntryData(String? id) {
+    return _hashEntries[id];
+  }
   OverlayEntry? getEntry(String? id) {
-    return _entries[id]?.entry;
+    return _hashEntries[id]?.entry;
   }
 
-  void insert(
+  OverlayEntryData insert(
     String id,
+    int zindex,
     OverlayEntry entry,
   ) {
-    final overlayPositon = getOverlayPosition(id);
-    _entries[id] = OverlayData(id: id, entry: entry);
+    final overlayData = OverlayEntryData(id: id, zindex: zindex, entry: entry);
+    _insert(overlayData);
+    return overlayData;
+  }
+
+  void retake(
+    OverlayEntryData data,
+  ) {
+    if (!hasEntry(data.id)) {
+      _insert(data);
+    }
+  }
+
+  void _insert(
+    OverlayEntryData data,
+  ) {
+    final belowOverlayEntry = _getBelowOverlayEntry(data.zindex);
+    _hashEntries[data.id] = data;
+    if (_entries.isEmpty) {
+      _entries.add(data);
+    } else {
+      _entries.insert(data.zindex + 1, data);
+    }
     _currentState.insert(
-      entry,
-      below: getEntry(overlayPositon?.below ?? ''),
-      above: getEntry(overlayPositon?.above ?? ''),
+      data.entry,
+      // below: getEntry(belowOverlayEntry?.below ?? ''),
+      above: belowOverlayEntry?.entry,
     );
   }
 
   void remove(String id) {
-    final entry = _entries[id];
+    final entry = _hashEntries[id];
     if (entry != null) {
       entry.entry.remove();
-      _entries.remove(id);
+      _hashEntries.remove(id);
+      _entries.remove(entry);
     }
   }
 
-  void rearrangeByPosition() {
-    final entries = <OverlayEntry>[];
-    for (final element in _entries.entries) {
-      final pos = getOverlayPosition(element.key);
-      if (pos == null || (pos.above == null && pos.below == null)) {
-        entries.add(element.value.entry);
-      }
-      if (pos!.above != null) {
-        final above = getEntry(pos.above)!;
-        final aboveIndex = entries.indexOf(above);
-        if (aboveIndex == -1) {
-          entries.add(element.value.entry);
-        } else {
-          entries.insert(aboveIndex + 1, element.value.entry);
-        }
-      } else {
-        final below = getEntry(pos.below)!;
-        final belowIndex = entries.indexOf(below);
-        if (belowIndex == -1) {
-          entries.insert(0, element.value.entry);
-        } else {
-          entries.insert(belowIndex, element.value.entry);
-        }
-      }
-    }
-    _currentState.rearrange(entries,
-        below: entries.isNotEmpty ? entries.last : null);
+  void rearrangeByZIndex() {
+    // final entries = _hashEntries.values.toList();
+    // entries.sort((a, b) => a.zindex.compareTo(b.zindex));
+    final convertedEntries = _entries.map((e) => e.entry);
+    _currentState.rearrange(convertedEntries,
+        below: convertedEntries.isNotEmpty ? convertedEntries.last : null);
   }
 
-  void setOverlayPosition(OverlayPosition position) {
-    _orderedEntries[position.id] = position;
+  OverlayEntryData? _getBelowOverlayEntry(int zindex) {
+    final found = _entries.lastWhereOrNull((e) => zindex > e.zindex);
+    return found;
   }
+  // void rearrangeByPosition() {
+  //   final entries = <OverlayEntry>[];
+  //   for (final element in _hashEntries.entries) {
+  //     final pos = _getOverlayPosition(element.key);
+  //     if (pos == null || (pos.above == null && pos.below == null)) {
+  //       entries.add(element.value.entry);
+  //     }
+  //     if (pos!.above != null) {
+  //       final above = getEntry(pos.above)!;
+  //       final aboveIndex = entries.indexOf(above);
+  //       if (aboveIndex == -1) {
+  //         entries.add(element.value.entry);
+  //       } else {
+  //         entries.insert(aboveIndex + 1, element.value.entry);
+  //       }
+  //     } else {
+  //       final below = getEntry(pos.below)!;
+  //       final belowIndex = entries.indexOf(below);
+  //       if (belowIndex == -1) {
+  //         entries.insert(0, element.value.entry);
+  //       } else {
+  //         entries.insert(belowIndex, element.value.entry);
+  //       }
+  //     }
+  //   }
+  //   _currentState.rearrange(entries,
+  //       below: entries.isNotEmpty ? entries.last : null);
+  // }
+  // OverlayPosition? _getOverlayPosition(String id) {
+  //   OverlayPosition? pos = _orderedEntries[id];
 
-  OverlayPosition? getOverlayPosition(String id) {
-    OverlayPosition? pos = _orderedEntries[id];
-
-    /// The entry with [id] will be on top.
-    if (pos == null || (pos.below == null && pos.above == null)) {
-      return null;
-    }
-    while (pos != null && (pos.below != null || pos.above != null)) {
-      final entry = getEntry(pos.below) ?? getEntry(pos.above);
-      if (entry != null) {
-        break;
-      }
-      pos = _orderedEntries[pos.below ?? pos.above];
-    }
-    return pos;
-  }
+  //   /// The entry with [id] will be on top.
+  //   if (pos == null || (pos.below == null && pos.above == null)) {
+  //     return null;
+  //   }
+  //   while (pos != null && (pos.below != null || pos.above != null)) {
+  //     final entry = getEntry(pos.below) ?? getEntry(pos.above);
+  //     if (entry != null) {
+  //       break;
+  //     }
+  //     pos = _orderedEntries[pos.below ?? pos.above];
+  //   }
+  //   return pos;
+  // }
 }
