@@ -74,7 +74,8 @@ mixin OverlayMixin {
         }
       }
     }
-    _currentState.rearrange(entries, below: entries.lastOrNull);
+    _currentState.rearrange(entries,
+        below: entries.isNotEmpty ? entries.last : null);
   }
 
   void setOverlayPosition(OverlayPosition position) {

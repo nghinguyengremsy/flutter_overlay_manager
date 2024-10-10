@@ -18,18 +18,18 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
 
   ///*Loading
   final _$loadingRequest = StreamController<LoadingRequestPayload>();
-  final _LOADING_ID_PREFIX = "LOADING";
-  late final _LOADING_ID = "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
+  final _loadingIdPrefix = "LOADING";
+  late final _loadingId = "${_loadingIdPrefix}_${const UuidV4().generate()}";
   var _loadingBackgroundColor = const Color.fromARGB(136, 158, 152, 152);
-  final _LOADING_REQUESTER_IDs = <String>{};
+  final _loadingRequesterIds = <String>{};
 
   ///
 
-  bool get _hasLoading => hasEntry(_LOADING_ID);
-  bool get _hasLoadingRequester => _LOADING_REQUESTER_IDs.isNotEmpty;
+  bool get _hasLoading => hasEntry(_loadingId);
+  bool get _hasLoadingRequester => _loadingRequesterIds.isNotEmpty;
 
   @override
-  String get loadingOverlayId => _LOADING_ID;
+  String get loadingOverlayId => _loadingId;
 
   void _init() {
     /// Loading
@@ -137,15 +137,15 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
   /// Only call this function if we don't know where the loading is showing up.
   @override
   void forceHideLoading() {
-    _LOADING_REQUESTER_IDs.clear();
-    hide(_LOADING_ID);
+    _loadingRequesterIds.clear();
+    hide(_loadingId);
   }
 
   void _hideLoadingHandler({required LoadingRequestPayload payload}) {
-    _LOADING_REQUESTER_IDs.remove(payload.id);
+    _loadingRequesterIds.remove(payload.id);
 
     if (!_hasLoadingRequester) {
-      hide(_LOADING_ID);
+      hide(_loadingId);
     }
   }
 
@@ -154,7 +154,7 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
       show(
         payload.builder ??
             (context) => const FourRotatingDots(color: Colors.blue, size: 40),
-        id: _LOADING_ID,
+        id: _loadingId,
         type: OverlayLayoutTypeEnum.dialog,
         backgroundColor: _loadingBackgroundColor,
       );
@@ -174,6 +174,6 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
   }
 
   String _generateLoadingID() {
-    return "${_LOADING_ID_PREFIX}_${const UuidV4().generate()}";
+    return "${_loadingIdPrefix}_${const UuidV4().generate()}";
   }
 }
