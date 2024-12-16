@@ -95,8 +95,7 @@ class OverlayManagerImpl with OverlayMixin implements OverlayManager {
 
   @override
   OverlayEntryControl showLoading(
-          {Widget Function(BuildContext context)? builder,
-          bool hasShadow = true}) =>
+          {Widget Function(BuildContext context)? builder}) =>
       show(
         builder ??
             (context) => const FourRotatingDots(color: Colors.blue, size: 40),

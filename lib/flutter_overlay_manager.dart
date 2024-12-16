@@ -63,7 +63,6 @@ class FlutterOverlayManager extends OverlayManager {
           bool hasShadow = true}) =>
       _impl.showLoading(
         builder: builder,
-        hasShadow: hasShadow,
       );
 
   /// Re-arrange the entries based on their position.
