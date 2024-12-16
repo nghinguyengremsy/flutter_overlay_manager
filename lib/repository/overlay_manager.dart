@@ -27,7 +27,7 @@ abstract class OverlayManager {
   void setLoadingZIndex(int zindex);
 
   OverlayEntryControl showLoading(
-      {Widget Function(BuildContext context)? builder, bool hasShadow = true});
+      {Widget Function(BuildContext context)? builder});
 
   /// Close the entry with [id]
   /// Only call this function if we don't know where the entry is showing up that mean we dont have an OverlayEntryControl reference.

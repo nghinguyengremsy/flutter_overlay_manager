@@ -1,3 +1,8 @@
+## 2.0.2
+
+* Remove unsued parameters.
+
+
 ## 2.0.1
 
 * Fix typo.
